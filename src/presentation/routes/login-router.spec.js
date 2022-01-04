@@ -7,15 +7,15 @@ const ServerError = require('../helpers/server-error')
 
 const makeSut = () => {
   const authUseCaseSpy = makeAuthUseCase()
-  const makeEmailValidatorSpy = makeEmailValidator()
+  const emailValidatorSpy = makeEmailValidator()
   authUseCaseSpy.accessToken = 'valid_token'
-  const sut = new LoginRouter(authUseCaseSpy, makeEmailValidatorSpy)
-  return { sut, authUseCaseSpy, makeEmailValidatorSpy }
+  const sut = new LoginRouter(authUseCaseSpy, emailValidatorSpy)
+  return { sut, authUseCaseSpy, emailValidatorSpy }
 }
-
 const makeEmailValidator = () => {
   class EmailValidatorSpy {
     isValid (email) {
+      this.email = email
       return this.isEmailValid
     }
   }
@@ -23,7 +23,6 @@ const makeEmailValidator = () => {
   emailValidatorSpy.isEmailValid = true
   return emailValidatorSpy
 }
-
 const makeAuthUseCase = () => {
   class AuthUseCaseSpy {
     async auth (email, password) {
@@ -34,7 +33,6 @@ const makeAuthUseCase = () => {
   }
   return new AuthUseCaseSpy()
 }
-
 const makeAuthUseCaseWithError = () => {
   class AuthUseCaseSpy {
     async auth () {
@@ -76,8 +74,8 @@ describe('Login router', () => {
     expect(httpResponse.statusCode).toBe(400)
   })
   test('Should return 400 if an invalid email is provided', async () => {
-    const { sut, makeEmailValidatorSpy } = makeSut()
-    makeEmailValidatorSpy.isEmailValid = false
+    const { sut, emailValidatorSpy } = makeSut()
+    emailValidatorSpy.isEmailValid = false
     const httpRequest = {
       body: {
         email: 'invalid_email@mail.com',
@@ -112,6 +110,17 @@ describe('Login router', () => {
     await sut.route(httpRequest)
     expect(authUseCaseSpy.email).toBe(httpRequest.body.email)
     expect(authUseCaseSpy.password).toBe(httpRequest.body.password)
+  })
+  test('Should call EmailValidator with correct email', async () => {
+    const { sut, emailValidatorSpy } = makeSut()
+    const httpRequest = {
+      body: {
+        email: 'any_email@mail.com',
+        password: 'any_password'
+      }
+    }
+    await sut.route(httpRequest)
+    expect(emailValidatorSpy.email).toBe(httpRequest.body.email)
   })
   test('Should return 401 when invalid credentials are provided', async () => {
     const { sut, authUseCaseSpy } = makeSut()
