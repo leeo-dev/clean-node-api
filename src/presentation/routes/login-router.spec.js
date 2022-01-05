@@ -1,6 +1,7 @@
 // SUT - system under test
 const LoginRouter = require('./login-router')
-const { MissingParamError, InvalidParamError, UnauthorizedError, ServerError } = require('../errors')
+const { UnauthorizedError, ServerError } = require('../errors')
+const { MissingParamError, InvalidParamError } = require('../../utils/errors')
 
 const makeSut = () => {
   const authUseCaseSpy = makeAuthUseCase()
