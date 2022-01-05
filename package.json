@@ -4,8 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "jest --watchAll",
-    "test:staged": "jest",
+    "test": "jest --watchAll --silent --colors --noStackTrace",
+    "test:only": "jest --watch --onlyChanged --findRelatedTests  --noStackTrace",
+    "test:staged": "jest --passWithNoTests --findRelatedTests --silent  --noStackTrace",
     "prepare": "husky install"
   },
   "standard": {
