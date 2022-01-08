@@ -1,14 +1,20 @@
 const { describe, test, expect } = require('@jest/globals')
 
 class LoadUserByEmailRepository {
-  async load () {
-    return null
+  constructor (userModel) {
+    this.userModel = userModel
+  }
+
+  async load (email) {
+    const user = null
+    return user
   }
 }
 
 describe('LoadUserByEmail Repository', () => {
   test('should return null if no user is found', async () => {
-    const sut = new LoadUserByEmailRepository()
+    const userModel = ''
+    const sut = new LoadUserByEmailRepository(userModel)
     const user = await sut.load('invalid_email@mail.com')
     expect(user).toBeNull()
   })
