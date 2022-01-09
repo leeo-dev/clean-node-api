@@ -1,8 +1,8 @@
 const { describe, test, expect } = require('@jest/globals')
-const { MongoClient } = require('mongodb')
+const MongoHelper = require('../helpers/mongo-helper')
+
 const LoadUserByEmailRepository = require('./load-user-by-email-repository')
 
-let client
 let db
 
 const makeSut = () => {
@@ -13,16 +13,15 @@ const makeSut = () => {
 
 describe('LoadUserByEmail Repository', () => {
   beforeAll(async () => {
-    client = new MongoClient(global.__MONGO_URI__)
-    await client.connect()
-    db = client.db(global.__MONGO_DB_NAME__)
+    await MongoHelper.connect(global.__MONGO_URI__, global.__MONGO_DB_NAME__)
+    db = await MongoHelper.getDb()
   })
 
   beforeEach(async () => {
     await db.collection('users').deleteMany()
   })
   afterAll(async () => {
-    await client.close()
+    await MongoHelper.disconnect()
   })
 
   test('should return null if no user is found', async () => {
