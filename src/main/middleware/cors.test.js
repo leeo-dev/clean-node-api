@@ -7,7 +7,7 @@ describe('CORS Middleware', () => {
     app.get('/test_cors', (request, response) => {
       response.send('')
     })
-    const response = await request(app).get('/test_x_powered_by')
+    const response = await request(app).get('/test_cors')
     expect(response.headers['access-control-allow-origin']).toBe('*')
     expect(response.headers['access-control-allow-method']).toBe('*')
     expect(response.headers['access-control-allow-headers']).toBe('*')
