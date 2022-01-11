@@ -38,4 +38,16 @@ describe('LoadUserByEmail Repository', () => {
     const updatedFakeUser = await userModel.findOne({ _id: fakeUser.insertedId })
     expect(updatedFakeUser.accessToken).toBe('valid_token')
   })
+
+  test('should throw if no UserModel is provided', async () => {
+    const userModel = db.collection('users')
+    const sut = new UpdateAccessTokenRepository()
+    const fakeUser = await userModel.insertOne({
+      email: 'valid_email@mail.com',
+      name: 'Leonardo',
+      password: 'hashed_password'
+    })
+    const promise = sut.update(fakeUser.insertedId, 'valid_token')
+    expect(promise).rejects.toThrow()
+  })
 })
