@@ -2,6 +2,7 @@ const { describe, test } = require('@jest/globals')
 const request = require('supertest')
 const app = require('../config/app')
 const MongoHelper = require('../../infra/helpers/mongo-helper')
+const bcrypt = require('bcrypt')
 let userModel
 
 describe('Login Routes', () => {
@@ -18,9 +19,9 @@ describe('Login Routes', () => {
   })
 
   test('Should return 200 when valid credential are provided', async () => {
-    await userModel.insertOne({ email: 'valid_email@mail.com', password: 'hashed_password' })
+    await userModel.insertOne({ email: 'valid_email@mail.com', password: bcrypt.hashSync('hashed_password', 10) })
     await request(app)
       .post('/api/login')
-      .send({ email: 'valid_email@mail.com', password: 'hashed_password' }).expect(401)
+      .send({ email: 'valid_email@mail.com', password: 'hashed_password' }).expect(200)
   })
 })
