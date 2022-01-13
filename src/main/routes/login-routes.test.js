@@ -24,9 +24,10 @@ describe('Login Routes', () => {
       .post('/api/login')
       .send({ email: 'valid_email@mail.com', password: 'hashed_password' }).expect(200)
   })
-  test('Should return 200 when valid credential are provided', async () => {
+  test('Should return 401 when valid credential are provided', async () => {
+    await userModel.insertOne({ email: 'valid_email@mail.com', password: bcrypt.hashSync('hashed_password', 10) })
     await request(app)
       .post('/api/login')
-      .send({ email: 'valid_email@mail.com', password: 'hashed_password' }).expect(401)
+      .send({ email: 'valid_email@mail.com', password: 'password' }).expect(401)
   })
 })
